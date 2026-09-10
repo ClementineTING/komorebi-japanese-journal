@@ -18,4 +18,4 @@ cp INSTALL-macOS.txt "$BUILD_DIR/dmg/READ-ME-FIRST.txt"
 hdiutil create -volname 'Komorebi' -srcfolder "$BUILD_DIR/dmg" -ov -format UDZO "$BUILD_DIR/Komorebi-1.1.0-macOS-universal.dmg"
 hdiutil verify "$BUILD_DIR/Komorebi-1.1.0-macOS-universal.dmg"
 codesign --verify --deep --strict "$BUILD_DIR/Komorebi.app"
-lipo -verify_arch arm64 x86_64 "$BUILD_DIR/Komorebi.app/Contents/MacOS/Komorebi"
+lipo "$BUILD_DIR/Komorebi.app/Contents/MacOS/Komorebi" -verify_arch arm64 x86_64
