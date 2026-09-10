@@ -68,7 +68,7 @@ namespace Komorebi {
                           if(importWords(words).skipped!==1)throw Error('Dedup failed');
                           if(JSON.parse(localStorage.getItem('komorebi-v1')).custom.length!==1)throw Error('Persistence failed');
                           navigate('import');document.querySelector('#custom-study').click();
-                          if(document.querySelector('.word').textContent!=='桜')throw Error('Custom study failed');
+                          if(current().w!=='桜'||document.querySelector('.word ruby rt')?.textContent!=='さくら')throw Error('Custom study failed');
                           navigate('dictionary');filter='custom';renderList();
                           if(document.querySelectorAll('.row').length!==1)throw Error('Search filter failed');
                           return 'PASS: dictionary, CSV import, deduplication, local persistence, custom study, list';
