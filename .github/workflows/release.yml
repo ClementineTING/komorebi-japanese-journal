@@ -1,0 +1,58 @@
+name: Build desktop installers
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build universal app and DMG
+        run: bash scripts/build-macos.sh
+      - name: Test image mounting and app launch
+        run: |
+          hdiutil attach build/Komorebi-1.1.0-macOS-universal.dmg -mountpoint /tmp/komorebi-mount -nobrowse
+          test -f /tmp/komorebi-mount/Komorebi.app/Contents/Resources/web/index.html
+          codesign --verify --deep --strict /tmp/komorebi-mount/Komorebi.app
+          open /tmp/komorebi-mount/Komorebi.app
+          sleep 8
+          pgrep -x Komorebi
+          pkill -x Komorebi
+          hdiutil detach /tmp/komorebi-mount
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macOS-DMG
+          path: build/Komorebi-1.1.0-macOS-universal.dmg
+          if-no-files-found: error
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build Windows EXE installer
+        shell: pwsh
+        run: ./scripts/build-windows.ps1
+      - name: Test installation and WebView2 app
+        shell: pwsh
+        run: |
+          $setup = Start-Process build/Komorebi-1.1.0-Windows-x64-Setup.exe -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR=C:\KomorebiSmoke' -PassThru -Wait
+          if ($setup.ExitCode -ne 0) { throw "Install failed: $($setup.ExitCode)" }
+          $app = Start-Process C:\KomorebiSmoke\Komorebi.exe -ArgumentList '--smoke-test' -PassThru
+          if (!$app.WaitForExit(120000)) { $app.Kill(); throw 'Smoke test timeout' }
+          Get-Content smoke-result.txt
+          if ($app.ExitCode -ne 0) { throw "Smoke test failed: $($app.ExitCode)" }
+          $uninstall = Start-Process C:\KomorebiSmoke\unins000.exe -ArgumentList '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART' -PassThru -Wait
+          if ($uninstall.ExitCode -ne 0) { throw 'Uninstall failed' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Windows-EXE
+          path: build/Komorebi-1.1.0-Windows-x64-Setup.exe
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Windows-smoke-log
+          path: smoke-result.txt

@@ -2,3 +2,7 @@ build/
 .DS_Store
 __pycache__/
 *.pyc
+windows/bin/
+windows/obj/
+smoke-result.txt
+node_modules/

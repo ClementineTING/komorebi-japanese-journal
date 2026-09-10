@@ -1,0 +1,16 @@
+木漏れ日-日语学习唯美手帐 1.1.0
+
+1. 将 Komorebi.app 拖入 Applications（应用程序）。
+2. 从 Applications 打开 Komorebi。
+
+此版本尚未获得 Apple Developer ID 签名与公证。
+DMG 是安装容器，换成 DMG 不会消除系统的开发者验证提示。
+
+如果出现“Apple 无法验证…”：
+先核对本仓库来源与 SHA256 校验值。如果你信任这个构建，
+请打开“系统设置 → 隐私与安全性”，找到刚被阻止的 Komorebi，
+选择“仍要打开”，再按系统提示确认。公司管控设备可能不允许此操作。
+不要全局关闭 Gatekeeper，也不需要运行任何关闭安全检查的终端命令。
+
+Apple 官方说明：https://support.apple.com/102445
+源码与下载：https://github.com/ClementineTING/komorebi-japanese-journal

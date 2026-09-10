@@ -1,0 +1,17 @@
+{
+  "name": "komorebi-japanese-journal",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-web.cjs",
+    "test": "node scripts/test-web.mjs"
+  },
+  "dependencies": {
+    "kuromoji": "0.1.2",
+    "fflate": "0.8.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.9",
+    "happy-dom": "20.8.4"
+  }
+}
